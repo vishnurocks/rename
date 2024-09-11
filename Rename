@@ -1,0 +1,22 @@
+# Set the directory path where the files are located
+$directory = "C:\Path\To\Your\Directory"
+
+# Get all files in the directory
+$files = Get-ChildItem -Path $directory
+
+# Loop through each file and rename it
+foreach ($file in $files) {
+    # Check if the file name starts with "fspalls" and remove it
+    if ($file.Name -like "fspalls*") {
+        # Remove the "fspalls" prefix from the file name
+        $newName = $file.Name -replace "^fspalls", ""
+
+        # Get the full path for the new name
+        $newFullName = Join-Path -Path $directory -ChildPath $newName
+
+        # Rename the file
+        Rename-Item -Path $file.FullName -NewName $newFullName
+    }
+}
+
+Write-Output "Files renamed by removing 'fspalls' prefix!"
