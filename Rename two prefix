@@ -1,0 +1,21 @@
+# Set the directory path where the files are located
+$directory = "C:\Path\To\Your\Directory"
+
+# Get all files in the directory
+$files = Get-ChildItem -Path $directory
+
+# Loop through each file and rename it
+foreach ($file in $files) {
+    # Use regex to remove the first two prefixes up to the second underscore
+    $newName = $file.Name -replace "^[^_]+_[^_]+_", ""
+
+    # Get the full path for the new name
+    $newFullName = Join-Path -Path $directory -ChildPath $newName
+
+    # Rename the file if a new name is generated
+    if ($newName -ne $file.Name) {
+        Rename-Item -Path $file.FullName -NewName $newFullName
+    }
+}
+
+Write-Output "Files renamed by removing the first two prefixes!"
