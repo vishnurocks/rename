@@ -1,20 +1,21 @@
-# Set the target folder where the files are located
-$folderPath = "C:\path\to\your\folder"
+# Set the directory path where the files are located
+$directory = "C:\Path\To\Your\Directory"
 
-# Set the prefix to be removed
-$prefixToRemove = "FSPALLS_QWERTY_123456"
+# Get all files in the directory
+$files = Get-ChildItem -Path $directory
 
-# Get all the files in the target folder
-Get-ChildItem -Path $folderPath | ForEach-Object {
-    # Check if the file name contains the prefix
-    if ($_.Name -like "*$prefixToRemove*") {
-        # Remove the prefix from the file name
-        $newName = $_.Name -replace [regex]::Escape($prefixToRemove), ""
-        
-        # Create the new file path with the updated name
-        $newFilePath = Join-Path $folderPath $newName
-        
-        # Rename the file
-        Rename-Item -Path $_.FullName -NewName $newFilePath
+# Loop through each file and rename it
+foreach ($file in $files) {
+    # Use regex to remove the last qualifier, keeping everything before the last underscore
+    $newName = $file.Name -replace "_[^_]+(?=\.[^.]+$)", ""
+
+    # Get the full path for the new name
+    $newFullName = Join-Path -Path $directory -ChildPath $newName
+
+    # Rename the file if a new name is generated
+    if ($newName -ne $file.Name) {
+        Rename-Item -Path $file.FullName -NewName $newFullName
     }
 }
+
+Write-Output "Files renamed by removing the last qualifier!"
